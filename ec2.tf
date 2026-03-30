@@ -19,9 +19,9 @@ resource "local_file" "private_key" {
 
 # Create EC2 instance with Nginx
 resource "aws_instance" "web" {
-  ami             = "ami-12345678"
+  ami             = "ami-07b643b5e45e"
   instance_type   = "t2.micro"
-  security_groups = [aws_security_group.web.name]
+  security_groups = ["default"]
   key_name        = aws_key_pair.deployer.key_name
 
   user_data = <<-EOF
