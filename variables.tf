@@ -10,6 +10,12 @@ variable "ec2_instance_name" {
   default     = "nginx-server"
 }
 
+variable "db_instance_name" {
+  description = "Database EC2 instance name tag"
+  type        = string
+  default     = "database-server"
+}
+
 variable "s3_bucket_name" {
   description = "S3 bucket name"
   type        = string

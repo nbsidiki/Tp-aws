@@ -38,5 +38,28 @@ resource "aws_instance" "web" {
 
   tags = {
     Name = var.ec2_instance_name
+    Role = "web"
+  }
+}
+
+# Create EC2 instance for database server
+resource "aws_instance" "db" {
+  ami             = "ami-07b643b5e45e"
+  instance_type   = var.ec2_instance_type
+  security_groups = ["default"]
+  key_name        = aws_key_pair.deployer.key_name
+
+  user_data = <<-EOF
+              #!/bin/bash
+              # Install MariaDB server
+              yum update -y
+              yum install -y mariadb-server
+              systemctl start mariadb
+              systemctl enable mariadb
+              EOF
+
+  tags = {
+    Name = var.db_instance_name
+    Role = "database"
   }
 }
