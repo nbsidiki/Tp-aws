@@ -1,6 +1,6 @@
 # Create an S3 bucket
 resource "aws_s3_bucket" "demo_bucket" {
-  bucket = "my-bucket-tp-iac"
+  bucket = var.s3_bucket_name
 }
 
 # Enable versioning for the bucket
