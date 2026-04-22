@@ -17,11 +17,34 @@ resource "local_file" "private_key" {
   file_permission = "0600"
 }
 
+## Get most recent AMI for an ECS-optimized Amazon Linux 2 instance
+data "aws_ami" "amazon_linux_2" {
+  most_recent = true
+ 
+  filter {
+    name   = "virtualization-type"
+    values = ["hvm"]
+  }
+ 
+  filter {
+    name   = "owner-alias"
+    values = ["amazon"]
+  }
+ 
+  filter {
+    name   = "name"
+    values = ["amzn2-ami-ecs-hvm-*-x86_64-ebs"]
+  }
+ 
+  owners = ["amazon"]
+}
+
+  
 # Create EC2 instance with Nginx
 resource "aws_instance" "web" {
-  ami             = "ami-07b643b5e45e"
+  ami             = data.aws_ami.amazon_linux_2.id
   instance_type   = var.ec2_instance_type
-  security_groups = ["default"]
+  security_groups = [aws_security_group.web.name]
   key_name        = aws_key_pair.deployer.key_name
 
   user_data = <<-EOF
@@ -44,9 +67,9 @@ resource "aws_instance" "web" {
 
 # Create EC2 instance for database server
 resource "aws_instance" "db" {
-  ami             = "ami-07b643b5e45e"
+  ami             = data.aws_ami.amazon_linux_2.id
   instance_type   = var.ec2_instance_type
-  security_groups = ["default"]
+  security_groups = [aws_security_group.web.name]
   key_name        = aws_key_pair.deployer.key_name
 
   user_data = <<-EOF
