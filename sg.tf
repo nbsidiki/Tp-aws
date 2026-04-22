@@ -1,6 +1,6 @@
 # Create a security group for the EC2 instance
 resource "aws_security_group" "web" {
-  name        = "nginx-sg"
+  name        = "web-app-sg"
   description = "Allow web and SSH traffic"
 
   ingress {
@@ -28,6 +28,6 @@ resource "aws_security_group" "web" {
   }
 
   tags = {
-    Name = "nginx-sg"
+    Name = "web-app-sg"
   }
 }

@@ -7,7 +7,7 @@ variable "ec2_instance_type" {
 variable "ec2_instance_name" {
   description = "EC2 instance name tag"
   type        = string
-  default     = "nginx-server"
+  default     = "uptime-kuma-server"
 }
 
 variable "db_instance_name" {

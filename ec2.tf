@@ -17,7 +17,7 @@ resource "local_file" "private_key" {
   file_permission = "0600"
 }
 
-## Get most recent AMI for an ECS-optimized Amazon Linux 2 instance
+## Get most recent standard Amazon Linux 2 AMI
 data "aws_ami" "amazon_linux_2" {
   most_recent = true
  
@@ -33,14 +33,14 @@ data "aws_ami" "amazon_linux_2" {
  
   filter {
     name   = "name"
-    values = ["amzn2-ami-ecs-hvm-*-x86_64-ebs"]
+    values = ["amzn2-ami-hvm-*-x86_64-ebs"]
   }
  
   owners = ["amazon"]
 }
 
   
-# Create EC2 instance with Nginx
+# Create EC2 instance with Uptime Kuma
 resource "aws_instance" "web" {
   ami             = data.aws_ami.amazon_linux_2.id
   instance_type   = var.ec2_instance_type
@@ -49,19 +49,23 @@ resource "aws_instance" "web" {
 
   user_data = <<-EOF
               #!/bin/bash
-              # Install and configure Nginx
+              # Install Docker and run Uptime Kuma
               yum update -y
-              amazon-linux-extras install -y nginx1
-              systemctl start nginx
-              systemctl enable nginx
-              
-              # Create a simple webpage
-              echo "<h1>Hello from Terraform and LocalStack!</h1>" > /usr/share/nginx/html/index.html
+              yum install -y docker
+              systemctl start docker
+              systemctl enable docker
+              docker volume create uptime-kuma-data
+              docker run -d \
+                --name uptime-kuma \
+                --restart unless-stopped \
+                -p 80:3001 \
+                -v uptime-kuma-data:/app/data \
+                louislam/uptime-kuma:latest
               EOF
 
   tags = {
     Name = var.ec2_instance_name
-    Role = "web"
+    Role = "monitoring"
   }
 }
 
