@@ -27,3 +27,8 @@ output "db_instance_public_ip" {
   description = "Public IP of the database EC2 instance"
   value       = aws_instance.db.public_ip
 }
+
+output "s3_object_url" {
+  description = "Public URL of the S3 object"
+  value       = "https://${aws_s3_bucket.demo_bucket.id}.s3.amazonaws.com/${aws_s3_object.demo_object.key}"
+}
